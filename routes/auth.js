@@ -27,6 +27,7 @@ router.post(
     try {
       const { email, password } = req.body;
 
+      console.log('success 2');
       //Check if user('s email) exists in db
       const checkUser = await db.query(
         'SELECT email FROM users WHERE email = $1',

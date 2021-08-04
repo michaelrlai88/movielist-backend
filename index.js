@@ -8,12 +8,8 @@ const cors = require('cors');
 const auth = require('./routes/auth');
 const api = require('./routes/api');
 
-const corsOptions = {
-  origin: ['https://movielist88.vercel.app', 'http://http://localhost:3000'],
-};
-
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use('/auth', auth);
 app.use('/api/v1', api);

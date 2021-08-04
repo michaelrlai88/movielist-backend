@@ -16,6 +16,8 @@ router.post(
     .isLength({ min: 3 })
     .withMessage('Please enter a valid password'),
   async (req, res) => {
+    res.status(200).json('success');
+
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {

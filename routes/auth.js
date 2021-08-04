@@ -65,6 +65,8 @@ router.post(
 
 //Login endpoint
 router.post('/login', async (req, res) => {
+  res.status(200).json('success');
+
   try {
     const { email, password } = req.body;
 

@@ -91,7 +91,7 @@ router.post('/login', async (req, res) => {
 
     //If password is correct, generate jwt token and return in response
     const token = jwtGet(checkUser.rows[0].id);
-    res.json({ token });
+    res.header('Access-Control-Allow-Origin: *').json({ token });
 
     //
   } catch (error) {

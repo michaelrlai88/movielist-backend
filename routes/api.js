@@ -28,6 +28,7 @@ router.get('/search', async (req, res) => {
 
     //call to api for movie info by id
     if (id) {
+      console.log('trying');
       const response = await axios({
         method: 'get',
         url: `http://omdbapi.com/?apikey=${process.env.apiKey}&i=${id}`,

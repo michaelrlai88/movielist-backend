@@ -6,6 +6,10 @@ const authorization = require('../middleware/authorization');
 
 //route '/api/v1'
 
+router.get('/test', (req, res) => {
+  res.status(200).json('success');
+});
+
 router.get('/', authorization, async (req, res) => {
   try {
     const response = await db.query('SELECT email FROM users where id = $1', [

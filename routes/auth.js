@@ -16,8 +16,6 @@ router.post(
     .isLength({ min: 3 })
     .withMessage('Please enter a valid password'),
   async (req, res) => {
-    res.status(200).json('success');
-
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -27,7 +25,6 @@ router.post(
     try {
       const { email, password } = req.body;
 
-      res.status(200).json('success 2');
       //Check if user('s email) exists in db
       const checkUser = await db.query(
         'SELECT email FROM users WHERE email = $1',

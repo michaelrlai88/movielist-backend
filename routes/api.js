@@ -6,10 +6,6 @@ const authorization = require('../middleware/authorization');
 
 //route '/api/v1'
 
-router.get('/test', (req, res) => {
-  res.status(200).json('success');
-});
-
 router.get('/', authorization, async (req, res) => {
   try {
     const response = await db.query('SELECT email FROM users where id = $1', [
@@ -28,7 +24,6 @@ router.get('/search', async (req, res) => {
 
     //call to api for movie info by id
     if (id) {
-      console.log('trying');
       const response = await axios({
         method: 'get',
         url: `http://omdbapi.com/?apikey=${process.env.apiKey}&i=${id}`,

@@ -82,6 +82,8 @@ router.post('/movies', authorization, async (req, res) => {
       'SELECT * FROM movie_saves WHERE user_ID = $1 AND title = $2',
       [req.user_id, title]
     );
+    const disconnect = client.end();
+    res.json('works here');
 
     if (checkExists.rows[0]) {
       const disconnect = client.end();
@@ -97,6 +99,7 @@ router.post('/movies', authorization, async (req, res) => {
   } catch (error) {
     const disconnect = client.end();
     console.log(error.message);
+    res.json({ error: error.message });
   }
 });
 

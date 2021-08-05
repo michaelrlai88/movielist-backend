@@ -1,10 +1,18 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const router = express.Router();
-const db = require('../db');
+/* const db = require('../db'); */
 const bcrypt = require('bcrypt');
 const jwtGet = require('../utils/jwtGet');
 const authorization = require('../middleware/authorization');
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  /*   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  }, */
+});
 
 // - /auth - route
 
@@ -26,7 +34,8 @@ router.post(
       const { email, password } = req.body;
 
       //Check if user('s email) exists in db
-      const checkUser = await db.query(
+      const client = await pool.connect();
+      const checkUser = await client.query(
         'SELECT email FROM users WHERE email = $1',
         [email]
       );
@@ -47,7 +56,7 @@ router.post(
       const hash = await bcrypt.hash(password, saltRounds);
 
       //Insert user's email and hash into db
-      const insertUser = await db.query(
+      const insertUser = await client.query(
         'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id',
         [email, hash]
       );
@@ -69,9 +78,11 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     //Check if user('s email) exists in db
-    const checkUser = await db.query('SELECT * FROM users WHERE email = $1', [
-      email,
-    ]);
+    const client = await pool.connect();
+    const checkUser = await client.query(
+      'SELECT * FROM users WHERE email = $1',
+      [email]
+    );
 
     //Status 401 if user does not exist in db
     if (!checkUser.rows[0]) {

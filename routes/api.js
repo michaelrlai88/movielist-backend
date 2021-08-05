@@ -1,16 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+/* const db = require('../db'); */
 const axios = require('axios');
 const authorization = require('../middleware/authorization');
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  /*   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  }, */
+});
 
 //route '/api/v1'
 
 router.get('/', authorization, async (req, res) => {
   try {
-    const response = await db.query('SELECT email FROM users where id = $1', [
-      req.user_id,
-    ]);
+    const client = await pool.connect();
+    const response = await client.query(
+      'SELECT email FROM users where id = $1',
+      [req.user_id]
+    );
 
     res.json(response.rows[0]);
   } catch (error) {
@@ -47,7 +57,8 @@ router.get('/search', async (req, res) => {
 
 router.get('/movies', authorization, async (req, res) => {
   try {
-    const response = await db.query(
+    const client = await pool.connect();
+    const response = await client.query(
       'SELECT * FROM movie_saves where user_id = $1',
       [req.user_id]
     );
@@ -62,7 +73,8 @@ router.post('/movies', authorization, async (req, res) => {
   const { imdb_id, title, year, poster, plot, genre } = req.body;
 
   try {
-    const checkExists = await db.query(
+    const client = await pool.connect();
+    const checkExists = await client.query(
       'SELECT * FROM movie_saves WHERE user_ID = $1 AND title = $2',
       [req.user_id, title]
     );
@@ -71,7 +83,7 @@ router.post('/movies', authorization, async (req, res) => {
       return res.status(400).json('Movie already added');
     }
 
-    const response = await db.query(
+    const response = await client.query(
       'INSERT INTO movie_saves(user_id, imdb_id, title, year, poster, plot, genre) values($1, $2, $3, $4, $5, $6, $7)',
       [req.user_id, imdb_id, title, year, poster, plot, genre]
     );
@@ -85,7 +97,8 @@ router.delete('/movies', authorization, async (req, res) => {
   const { imdb_id } = req.body;
 
   try {
-    const response = await db.query(
+    const client = await pool.connect();
+    const response = await client.query(
       'DELETE FROM movie_saves WHERE user_id = $1 AND imdb_id = $2',
       [req.user_id, imdb_id]
     );

@@ -21,9 +21,11 @@ router.get('/', authorization, async (req, res) => {
       'SELECT email FROM users where id = $1',
       [req.user_id]
     );
+    const disconnect = client.end();
 
     res.json(response.rows[0]);
   } catch (error) {
+    const disconnect = client.end();
     console.log(error.message);
   }
 });
@@ -62,9 +64,11 @@ router.get('/movies', authorization, async (req, res) => {
       'SELECT * FROM movie_saves where user_id = $1',
       [req.user_id]
     );
+    const disconnect = client.end();
 
     res.status(200).json(response.rows);
   } catch (error) {
+    const disconnect = client.end();
     console.log(error.message);
   }
 });
@@ -80,6 +84,7 @@ router.post('/movies', authorization, async (req, res) => {
     );
 
     if (checkExists.rows[0]) {
+      const disconnect = client.end();
       return res.status(400).json('Movie already added');
     }
 
@@ -87,8 +92,10 @@ router.post('/movies', authorization, async (req, res) => {
       'INSERT INTO movie_saves(user_id, imdb_id, title, year, poster, plot, genre) values($1, $2, $3, $4, $5, $6, $7)',
       [req.user_id, imdb_id, title, year, poster, plot, genre]
     );
+    const disconnect = client.end();
     res.json('Successfully added');
   } catch (error) {
+    const disconnect = client.end();
     console.log(error.message);
   }
 });
@@ -102,8 +109,10 @@ router.delete('/movies', authorization, async (req, res) => {
       'DELETE FROM movie_saves WHERE user_id = $1 AND imdb_id = $2',
       [req.user_id, imdb_id]
     );
+    const disconnect = client.end();
     res.json('Successfully deleted');
   } catch (error) {
+    const disconnect = client.end();
     console.log(error.message);
   }
 });

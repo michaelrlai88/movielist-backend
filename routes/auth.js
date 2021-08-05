@@ -39,8 +39,10 @@ router.post(
         'SELECT email FROM users WHERE email = $1',
         [email]
       );
+
       //Status 401 if user already exists
       if (checkUser.rows[0]) {
+        const disconnect = client.end();
         return res.status(401).json({
           errors: [
             {
@@ -60,6 +62,7 @@ router.post(
         'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id',
         [email, hash]
       );
+      const disconnect = client.end();
 
       //Generate jwt token and include in response object
       const token = jwtGet(insertUser.rows[0].id);
@@ -67,6 +70,7 @@ router.post(
 
       //
     } catch (error) {
+      const disconnect = client.end();
       console.log(error.message);
     }
   }
@@ -83,6 +87,7 @@ router.post('/login', async (req, res) => {
       'SELECT * FROM users WHERE email = $1',
       [email]
     );
+    const disconnect = client.end();
 
     //Status 401 if user does not exist in db
     if (!checkUser.rows[0]) {
@@ -106,6 +111,7 @@ router.post('/login', async (req, res) => {
 
     //
   } catch (error) {
+    const disconnect = client.end();
     console.log(error.message);
   }
 });

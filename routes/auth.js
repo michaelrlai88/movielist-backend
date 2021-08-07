@@ -43,15 +43,15 @@ router.post(
       const { email, password } = req.body;
 
       //Check if user('s email) exists in db
-      const client = await pool.connect();
-      const checkUser = await client.query(
+      /* const client = await pool.connect(); */
+      const checkUser = await pool.query(
         'SELECT email FROM users WHERE email = $1',
         [email]
       );
 
       //Status 401 if user already exists
       if (checkUser.rows[0]) {
-        const disconnect = client.end();
+        /* const disconnect = client.end(); */
         return res.status(401).json({
           errors: [
             {
@@ -67,11 +67,11 @@ router.post(
       const hash = await bcrypt.hash(password, saltRounds);
 
       //Insert user's email and hash into db
-      const insertUser = await client.query(
+      const insertUser = await pool.query(
         'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id',
         [email, hash]
       );
-      const disconnect = client.end();
+      /* const disconnect = client.end(); */
 
       //Generate jwt token and include in response object
       const token = jwtGet(insertUser.rows[0].id);
@@ -79,7 +79,7 @@ router.post(
 
       //
     } catch (error) {
-      const disconnect = client.end();
+      /* const disconnect = client.end(); */
       console.log(error.message);
     }
   }
@@ -91,12 +91,11 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     //Check if user('s email) exists in db
-    const client = await pool.connect();
-    const checkUser = await client.query(
-      'SELECT * FROM users WHERE email = $1',
-      [email]
-    );
-    const disconnect = client.end();
+    /* const client = await pool.connect(); */
+    const checkUser = await pool.query('SELECT * FROM users WHERE email = $1', [
+      email,
+    ]);
+    /* const disconnect = client.end(); */
 
     //Status 401 if user does not exist in db
     if (!checkUser.rows[0]) {
@@ -120,7 +119,7 @@ router.post('/login', async (req, res) => {
 
     //
   } catch (error) {
-    const disconnect = client.end();
+    /* const disconnect = client.end(); */
     console.log(error.message);
   }
 });

@@ -5,11 +5,14 @@ const axios = require('axios');
 const authorization = require('../middleware/authorization');
 const { Pool } = require('pg');
 
+if (process.env.DATABASE_URL) {
+}
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  /*   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
-  },
+  }, */
 });
 
 //route '/api/v1'

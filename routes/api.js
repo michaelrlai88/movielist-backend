@@ -8,12 +8,16 @@ const { Pool } = require('pg');
 if (process.env.DATABASE_URL) {
 }
 
-const pool = new Pool({
-  /*   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  }, */
-});
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      }
+    : null
+);
 
 //route '/api/v1'
 

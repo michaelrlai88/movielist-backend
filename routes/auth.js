@@ -7,12 +7,16 @@ const jwtGet = require('../utils/jwtGet');
 const authorization = require('../middleware/authorization');
 const { Pool } = require('pg');
 
-const pool = new Pool({
-  /*   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  }, */
-});
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      }
+    : null
+);
 
 /* if (process.env.DATABASE_URL) {
   (pool.connectionString = process.env.DATABASE_URL),
